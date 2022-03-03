@@ -1,3 +1,9 @@
+{{
+    config(
+        materialized='table',transient=False
+    )
+}}
+
 SELECT
     a.L_ORDERKEY AS ORDERKEY,
     a.L_PARTKEY AS PARTKEY ,

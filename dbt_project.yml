@@ -1,7 +1,6 @@
 name: dbtvault_snowflake_demo
 profile: dbtvault_snowflake_demo
-version: '5.2.0'
-require-dbt-version: ['>=0.20.0', '<0.22.0']
+version: '1.0.0'
 config-version: 2
 
 analysis-paths:
@@ -20,17 +19,18 @@ target-path: target
 
 vars:
   load_date: '1992-01-08'
-  tpch_size: 10 #1, 10, 100, 1000, 10000
+  tpch_size: 1 #1, 10, 100, 1000, 10000
+  hash: SHA
 
 models:
   dbtvault_snowflake_demo:
     raw_stage:
       tags:
-        - 'raw'
-      materialized: view
+        - 'pstg'
+      materialized: table
     stage:
       tags:
-        - 'stage'
+        - 'hash_view'
       enabled: true
       materialized: view
     raw_vault:
