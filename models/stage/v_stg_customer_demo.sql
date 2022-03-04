@@ -4,6 +4,8 @@ derived_columns:
   RECORD_SOURCE: '!TPCH-ORDERS'
   EFFECTIVE_FROM: 'ORDERDATE'
   EFFECTIVE_TO: "NVL(LAG(ORDERDATE) OVER (PARTITION BY CUSTOMERKEY ORDER BY ORDERDATE DESC),TO_DATE('12/31/9999'))"
+
+limit_col: 'LOAD_DATE'
 hashed_columns:
   CUSTOMER_PK: 
     - 'CUSTOMERKEY'
@@ -23,6 +25,10 @@ hashed_columns:
 
 {% set hashed_columns = metadata_dict['hashed_columns'] %}
 
+{% set ranked_columns = metadata_dict['ranked_columns'] %}
+
+{% set limit_col = metadata_dict['limit_col'] %}
+
 WITH staging AS (
 {{ dbtvault.stage(include_source_columns=none,
                   source_model=source_model,
@@ -32,5 +38,5 @@ WITH staging AS (
 )
 
 SELECT *,
-       TO_DATE(CURRENT_TIMESTAMP()) AS LOAD_DATE
+       TO_DATE(CURRENT_TIMESTAMP()) AS LOAD_DTM
 FROM staging

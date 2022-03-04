@@ -36,6 +36,9 @@ WITH source_data AS (
     {%- endif %}
     FROM {{ ref(source_model) }} AS a
     WHERE {{ dbtvault.multikey(src_pk, prefix='a', condition='IS NOT NULL') }}
+    {% if (src_ldts is not none) -%}
+    AND {{ src_ldts }} = (SELECT MAX( {{ src_ldts }} ) FROM {{ ref(source_model) }} )
+    {% endif %}
     {%- if model.config.materialized == 'vault_insert_by_period' %}
     AND __PERIOD_FILTER__
     {% elif model.config.materialized == 'vault_insert_by_rank' %}
@@ -72,7 +75,7 @@ records_to_insert AS (
         LEFT JOIN latest_records
             ON {{ dbtvault.multikey(src_pk, prefix=['latest_records','stage'], condition='=') }}
             WHERE {{ dbtvault.prefix([src_hashdiff], 'latest_records', alias_target='target') }} != {{ dbtvault.prefix([src_hashdiff], 'stage') }}
-                OR {{ dbtvault.prefix([src_hashdiff], 'latest_records', alias_target='target') }} IS NOT NULL
+                OR {{ dbtvault.prefix([src_hashdiff], 'latest_records', alias_target='target') }} IS NULL
     {%- endif %}
 )
 
