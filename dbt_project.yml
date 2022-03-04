@@ -19,7 +19,7 @@ target-path: target
 
 vars:
   load_date: '1992-01-08'
-  tpch_size: 1 #1, 10, 100, 1000, 10000
+  tpch_size: 1
   hash: SHA
 
 models:
